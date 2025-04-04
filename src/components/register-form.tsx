@@ -23,7 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import Spinner from "@/components/spinner";
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 import { AlertError } from "@/components/alert-error";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -55,8 +55,12 @@ export function RegisterForm({
     try {
       await axios.post("/api/v1/auth/register", values, createAxiosConfig());
       await router.push("/login?success=true");
-    } catch (e) {
-      setError(parseApiErrors(e.response?.data));
+    } catch (e: unknown) {
+      if (e instanceof AxiosError){
+        setError(parseApiErrors(e.response?.data));
+      } else {
+        console.error(e)
+      }
     } finally {
       setIsLoading(false);
     }
@@ -125,7 +129,7 @@ export function RegisterForm({
                 disabled={isLoading}
               >
                 <>
-                  {isLoading && <Spinner size={4} inline />}
+                  {isLoading && <Spinner size={'4'} inline />}
                   Register
                 </>
               </Button>

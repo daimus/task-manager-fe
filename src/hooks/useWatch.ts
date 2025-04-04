@@ -1,6 +1,11 @@
 import {create} from "zustand";
 
-export const useWatch = create((set) => ({
+interface WatchState {
+    watch: number;
+    updateWatcher: () => void;
+}
+
+export const useWatch = create<WatchState>((set) => ({
     watch: 0,
-    updateWatcher: () => set((state) => ({watch: state.watch + 1}))
+    updateWatcher: () => set((state) => ({ watch: state.watch + 1 })),
 }));

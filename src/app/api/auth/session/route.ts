@@ -5,7 +5,7 @@ import {ISessionData} from "@/type/session";
 import {sessionConfig} from "@/constant/session";
 
 export async function GET() {
-    const session = await getIronSession<ISessionData>(cookies(), sessionConfig);
+    const session = await getIronSession<ISessionData>(await cookies(), sessionConfig);
     if (!session) return redirect('/login')
     return Response.json(session);
 }

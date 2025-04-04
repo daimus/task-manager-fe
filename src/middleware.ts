@@ -6,7 +6,7 @@ import {ISessionData} from "@/type/session";
 import {getIronSession} from "iron-session";
 
 export async function middleware(request: NextRequest) {
-    const session = await getIronSession<ISessionData>(cookies(), sessionConfig);
+    const session = await getIronSession<ISessionData>(await cookies(), sessionConfig);
     if (!session?.access_token){
         return NextResponse.rewrite(new URL('/login', request.url))
     }

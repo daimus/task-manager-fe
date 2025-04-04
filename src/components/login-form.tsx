@@ -11,14 +11,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import {useRouter, useSearchParams} from "next/navigation";
+import {useRouter} from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Check } from "lucide-react";
 import {z} from "zod";
 import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import Spinner from "@/components/spinner";
 import {AlertError} from "@/components/alert-error";
@@ -28,11 +28,7 @@ const loginSchema = z.object({
   password: z.string().min(8),
 });
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
-  const searchParams = useSearchParams();
+export function LoginForm({success} : {success: boolean}) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Array<string>>([]);
@@ -49,14 +45,18 @@ export function LoginForm({
     try {
       await axios.post("/api/auth/login", values);
       router.push('/')
-    } catch (e) {
-      setError(parseApiErrors(e.response?.data));
+    } catch (e: unknown) {
+      if (e instanceof AxiosError){
+        setError(parseApiErrors(e.response?.data));
+      } else {
+        console.error(e)
+      }
     } finally {
       setIsLoading(false);
     }
   }
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-6")}>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
@@ -64,7 +64,7 @@ export function LoginForm({
         </CardHeader>
         <CardContent>
           <>
-            {!!searchParams.get("success") && (
+            {!!success && (
               <>
                 <Alert variant="constructive">
                   <Check className="h-4 w-4" />
@@ -118,13 +118,13 @@ export function LoginForm({
                   disabled={isLoading}
               >
                 <>
-                  {isLoading && <Spinner size={4} inline />}
+                  {isLoading && <Spinner size={'4'} inline />}
                   Login
                 </>
               </Button>
               <div className="text-center text-sm">
                 Don&apos;t have an account?{" "}
-                <Link href={"/login"} className="underline underline-offset-4">
+                <Link href={"/register"} className="underline underline-offset-4">
                   Register
                 </Link>
               </div>

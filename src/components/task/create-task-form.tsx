@@ -7,7 +7,7 @@ import {z} from "zod";
 import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 import {cn, createAxiosConfig, parseApiErrors} from "@/lib/utils";
 import {useSession} from "@/components/session-provider";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
@@ -17,20 +17,22 @@ import {toast} from "sonner";
 
 const createTaskSchema = z.object({
     name: z.string().min(3),
-    completed: z.boolean().default(false)
+    completed: z.coerce.boolean().default(false)
 });
 
 export default function CreateTaskForm() {
     const {token} = useSession();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isCreated, setIsCreated] = useState<boolean>(false);
-    const {updateWatcher} = useWatch()
-    const form = useForm<z.infer<typeof createTaskSchema>>({
+    const {updateWatcher} = useWatch();
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const form = useForm<z.input<typeof createTaskSchema>, any, z.output<typeof createTaskSchema>>({
         resolver: zodResolver(createTaskSchema),
         defaultValues: {
             name: "",
             completed: false
-        },
+        }
     });
 
     async function onSubmit(values: z.infer<typeof createTaskSchema>) {
@@ -43,8 +45,12 @@ export default function CreateTaskForm() {
             setTimeout(function (){
                 setIsCreated(false)
             }, 1500)
-        } catch (e) {
-            toast.error(parseApiErrors(e.response?.data).join('\n'))
+        } catch (e: unknown) {
+            if (e instanceof AxiosError){
+                toast.error(parseApiErrors(e.response?.data).join('\n'))
+            } else {
+                console.error(e)
+            }
         } finally {
             setIsLoading(false);
         }

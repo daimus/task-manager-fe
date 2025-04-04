@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function parseApiErrors(response) {
+export function parseApiErrors(response: {errors: {message: string}[]}) {
   if (!response.errors || !Array.isArray(response.errors)) {
     return ["Unknown error"];
   }

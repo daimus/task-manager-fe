@@ -8,7 +8,7 @@ import {ISessionData} from "@/type/session";
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 export async function POST(request: NextRequest) {
-    const session = await getIronSession<ISessionData>(cookies(), sessionConfig);
+    const session = await getIronSession<ISessionData>(await cookies(), sessionConfig);
     const body = await request.json();
 
     const config : AxiosRequestConfig = {
