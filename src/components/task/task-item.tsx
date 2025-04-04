@@ -3,9 +3,16 @@ import {Button} from "@/components/ui/button";
 import {Pencil, Check, Trash2} from "lucide-react";
 import {useState} from "react";
 import {Input} from "@/components/ui/input";
-import {cn} from "@/lib/utils";
+import {cn, createAxiosConfig, parseApiErrors} from "@/lib/utils";
+import axios, {AxiosError} from "axios";
+import {toast} from "sonner";
+import {useSession} from "@/components/session-provider";
+import {useWatch} from "@/hooks/useWatch";
 
 export default function TaskItem ({task} : {task: {id: number, name: string, completed: boolean}}){
+    const {token} = useSession();
+    const {updateWatcher} = useWatch();
+    const [t, sT] = useState(task)
     const [isEditMode, setIsEditMode] = useState(false);
 
     function handleEdit(){
@@ -13,7 +20,23 @@ export default function TaskItem ({task} : {task: {id: number, name: string, com
     }
 
     function handleTaskCheck(value: boolean){
-        // TODO: Handle when task checked or unchecked
+        sT({
+            ...t,
+            completed: value
+        });
+        updateTask({
+            name: t.name,
+            completed: value
+        })
+    }
+
+    async function updateTask(data : {name: string, completed: boolean}){
+        try {
+            await axios.patch(`/api/v1/tasks/${task.id}`, data, createAxiosConfig(token));
+            updateWatcher();
+        } catch (e: AxiosError) {
+            toast.error(parseApiErrors(e.response?.data).join('\n'))
+        }
     }
 
     return (
@@ -21,13 +44,13 @@ export default function TaskItem ({task} : {task: {id: number, name: string, com
             <div className="flex items-center justify-between space-x-4">
                 <div className="flex items-center space-x-4 w-full">
                     {
-                        isEditMode ? <Button className="cursor-pointer" type="button" variant="destructive"><Trash2 /> </Button> : <Checkbox className="w-6 h-6 rounded-full cursor-pointer" onCheckedChange={handleTaskCheck} checked={task.completed} />
+                        isEditMode ? <Button className="cursor-pointer" type="button" variant="destructive"><Trash2 /> </Button> : <Checkbox className="w-6 h-6 rounded-full cursor-pointer" onCheckedChange={handleTaskCheck} checked={t.completed} />
                     }
                     <div className="w-full">
                         {
                             isEditMode ?
                                 <Input defaultValue="Mancing" className="w-full" /> :
-                                <p className={cn(`text-md font-medium leading-none`, task.completed && 'line-through')}>{task.name}</p>
+                                <p className={cn(`text-md font-medium leading-none`, t.completed && 'line-through')}>{t.name}</p>
                         }
                     </div>
                 </div>
