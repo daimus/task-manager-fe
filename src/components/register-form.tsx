@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, parseApiErrors } from "@/lib/utils";
+import {cn, createAxiosConfig, parseApiErrors} from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -23,7 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import Spinner from "@/components/spinner";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { AlertError } from "@/components/alert-error";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -53,11 +53,9 @@ export function RegisterForm({
   async function onSubmit(values: z.infer<typeof registerSchema>) {
     setIsLoading(true);
     try {
-      const response = await axios.post("/api/v1/auth/register", values, {
-        baseURL: process.env.NEXT_PUBLIC_BASE_API_URL,
-      });
+      await axios.post("/api/v1/auth/register", values, createAxiosConfig());
       await router.push("/login?success=true");
-    } catch (e: AxiosError) {
+    } catch (e) {
       setError(parseApiErrors(e.response?.data));
     } finally {
       setIsLoading(false);

@@ -7,10 +7,10 @@ import {z} from "zod";
 import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import axios, {AxiosError} from "axios";
+import axios from "axios";
 import {cn, createAxiosConfig, parseApiErrors} from "@/lib/utils";
 import {useSession} from "@/components/session-provider";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import Spinner from "@/components/spinner";
 import {useWatch} from "@/hooks/useWatch";
 import {toast} from "sonner";
@@ -43,7 +43,7 @@ export default function CreateTaskForm() {
             setTimeout(function (){
                 setIsCreated(false)
             }, 1500)
-        } catch (e: AxiosError) {
+        } catch (e) {
             toast.error(parseApiErrors(e.response?.data).join('\n'))
         } finally {
             setIsLoading(false);

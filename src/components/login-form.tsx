@@ -18,7 +18,7 @@ import {z} from "zod";
 import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import axios, {AxiosError} from "axios";
+import axios from "axios";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import Spinner from "@/components/spinner";
 import {AlertError} from "@/components/alert-error";
@@ -49,7 +49,7 @@ export function LoginForm({
     try {
       await axios.post("/api/auth/login", values);
       router.push('/')
-    } catch (e: AxiosError) {
+    } catch (e) {
       setError(parseApiErrors(e.response?.data));
     } finally {
       setIsLoading(false);

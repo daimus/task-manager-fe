@@ -4,7 +4,7 @@ import {Pencil, Check, Trash2} from "lucide-react";
 import {useState} from "react";
 import {Input} from "@/components/ui/input";
 import {cn, createAxiosConfig, parseApiErrors} from "@/lib/utils";
-import axios, {AxiosError} from "axios";
+import axios from "axios";
 import {toast} from "sonner";
 import {useSession} from "@/components/session-provider";
 import {useWatch} from "@/hooks/useWatch";
@@ -60,7 +60,7 @@ export default function TaskItem ({task} : {task: {id: number, name: string, com
             await axios.delete(`/api/v1/tasks/${task.id}`, createAxiosConfig(token));
             updateWatcher();
             setIsEditMode(false)
-        } catch (e: AxiosError) {
+        } catch (e) {
             toast.error(parseApiErrors(e.response?.data).join('\n'))
         } finally {
             setIsLoading(false)
@@ -73,7 +73,7 @@ export default function TaskItem ({task} : {task: {id: number, name: string, com
             await axios.patch(`/api/v1/tasks/${task.id}`, data, createAxiosConfig(token));
             updateWatcher();
             setIsEditMode(false)
-        } catch (e: AxiosError) {
+        } catch (e) {
             toast.error(parseApiErrors(e.response?.data).join('\n'))
         } finally {
             setIsLoading(false)
