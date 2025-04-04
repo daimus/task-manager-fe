@@ -44,6 +44,10 @@ export default function TaskItem ({task} : {task: {id: number, name: string, com
     }
 
     async function handleUpdate(values: z.infer<typeof updateTaskSchema>){
+        if (values.name === t.name){
+            setIsEditMode(false)
+            return;
+        }
         await updateTask({
             name: values.name,
             completed: t.completed
