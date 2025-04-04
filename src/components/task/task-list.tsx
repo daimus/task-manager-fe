@@ -1,21 +1,22 @@
 'use client'
 
 import TaskItem from "@/components/task/task-item";
-import {useState} from "react";
+import useFetch from "@/hooks/useFetch";
+import TaskLoading from "@/components/task/task-loading";
+import {useWatch} from "@/hooks/useWatch";
 
 export default function TaskList(){
-    const [tasks, setTasks] = useState([
-        {id: 1, name: 'Mancing', completed: false},
-        {id: 2, name: 'Beli Ikan', completed: false},
-        {id: 3, name: 'Kasih Makan Ikan', completed: false},
-        {id: 4, name: 'Kasih Minum Ikan', completed: true},
-    ])
+    const {watch} = useWatch()
+    const {isLoading, data} = useFetch(`/api/v1/tasks?watch=${watch}`)
     return (
         <>
             <div className="mt-4">
+                {
+                    isLoading && <TaskLoading />
+                }
                 <div className="grid gap-2">
                     {
-                        tasks.map(task => (
+                        (data || []).map(task => (
                             <TaskItem task={task} key={task.id}/>
                         ))
                     }
