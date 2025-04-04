@@ -50,6 +50,19 @@ export default function TaskItem ({task} : {task: {id: number, name: string, com
         })
     }
 
+    async function handleDelete(){
+        setIsLoading(true)
+        try {
+            await axios.delete(`/api/v1/tasks/${task.id}`, createAxiosConfig(token));
+            updateWatcher();
+            setIsEditMode(false)
+        } catch (e: AxiosError) {
+            toast.error(parseApiErrors(e.response?.data).join('\n'))
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     async function updateTask(data : {name: string, completed: boolean}){
         setIsLoading(true)
         try {
@@ -70,7 +83,15 @@ export default function TaskItem ({task} : {task: {id: number, name: string, com
                     <div className="flex items-center space-x-4 w-full">
                         {
                             isEditMode ?
-                                <Button className="cursor-pointer" type="button" variant="destructive"><Trash2/>
+                                <Button className="cursor-pointer" type="button" variant="destructive" onClick={(e) => {
+                                    e.preventDefault();
+                                    handleDelete()
+                                }}>
+                                    <>
+                                        {
+                                            isLoading ? <Spinner /> : <Trash2/>
+                                        }
+                                    </>
                                 </Button> : <Checkbox className="w-6 h-6 rounded-full cursor-pointer"
                                                       onCheckedChange={handleTaskCheck} checked={t.completed}/>
                         }
