@@ -1,6 +1,10 @@
 import { GalleryVerticalEnd } from "lucide-react"
-
 import {RegisterForm} from "@/components/register-form";
+import {Metadata} from "next";
+
+export const metadata: Metadata = {
+  title: 'Register | Task Manager'
+}
 
 export default function LoginPage() {
   return (

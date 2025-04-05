@@ -1,6 +1,11 @@
 import { GalleryVerticalEnd } from "lucide-react"
 
 import { LoginForm } from "@/components/login-form"
+import {Metadata} from "next";
+
+export const metadata: Metadata = {
+  title: 'Login | Task Manager'
+}
 
 export default async function LoginPage({searchParams}: {searchParams: Promise<{ [key: string]: string | string[] | undefined }>}) {
   const sp = await searchParams;
