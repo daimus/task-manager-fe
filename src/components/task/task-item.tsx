@@ -1,7 +1,7 @@
 import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import {Pencil, Check, Trash2} from "lucide-react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Input} from "@/components/ui/input";
 import {cn, createAxiosConfig, parseApiErrors} from "@/lib/utils";
 import axios, {AxiosError} from "axios";
@@ -22,7 +22,7 @@ export default function TaskItem ({task} : {task: {id: number, name: string, com
     const {token} = useSession();
     const {updateWatcher} = useWatch();
     const [isLoading, setIsLoading] = useState(false);
-    const [t, sT] = useState(task)
+    const [t, sT] = useState({id: 0, name: '', completed: false})
     const [isEditMode, setIsEditMode] = useState(false);
 
     const form = useForm<z.infer<typeof updateTaskSchema>>({
@@ -87,6 +87,10 @@ export default function TaskItem ({task} : {task: {id: number, name: string, com
             setIsLoading(false)
         }
     }
+
+    useEffect(() => {
+        sT(task)
+    }, [task]);
 
     return (
         <>
