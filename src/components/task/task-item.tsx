@@ -12,7 +12,7 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import Spinner from "@/components/spinner";
-import {SessionContext} from "@/app/session-provider";
+import {SessionContext} from "@/components/session-provider";
 
 const updateTaskSchema = z.object({
     name: z.string().min(3)

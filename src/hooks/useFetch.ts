@@ -3,7 +3,7 @@
 import {useContext, useEffect, useState} from "react";
 import axios, {AxiosError, AxiosRequestConfig} from "axios";
 import {createAxiosConfig, parseApiErrors} from "@/lib/utils";
-import {SessionContext} from "@/app/session-provider";
+import {SessionContext} from "@/components/session-provider";
 
 export default function useFetch (url: string){
     const {access_token} = useContext(SessionContext);

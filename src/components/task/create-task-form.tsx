@@ -13,7 +13,7 @@ import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/
 import Spinner from "@/components/spinner";
 import {useWatch} from "@/hooks/useWatch";
 import {toast} from "sonner";
-import {SessionContext} from "@/app/session-provider";
+import {SessionContext} from "@/components/session-provider";
 
 const createTaskSchema = z.object({
     name: z.string().min(3),
