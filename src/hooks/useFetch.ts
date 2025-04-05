@@ -1,12 +1,12 @@
 'use client'
 
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import axios, {AxiosError, AxiosRequestConfig} from "axios";
-import {useSession} from "@/components/session-provider";
 import {createAxiosConfig, parseApiErrors} from "@/lib/utils";
+import {SessionContext} from "@/app/session-provider";
 
 export default function useFetch (url: string){
-    const {token} = useSession();
+    const {access_token} = useContext(SessionContext);
     const [data, setData] = useState(null);
     const [error, setError] = useState<string[] | null>([]);
     const [isEmpty, setIsEmpty] = useState(false);
@@ -20,7 +20,7 @@ export default function useFetch (url: string){
                 setIsEmpty(false);
                 setIsLoading(true);
                 try{
-                    const config : AxiosRequestConfig = createAxiosConfig(token)
+                    const config : AxiosRequestConfig = createAxiosConfig(access_token)
                     const response = await axios.get(url, config);
                     setIsEmpty(false);
                     setData(response.data)
@@ -37,7 +37,7 @@ export default function useFetch (url: string){
                 }
             }
         )()
-    }, [url, token])
+    }, [url, access_token])
 
     return {isLoading, isEmpty, data, error};
 }

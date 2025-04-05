@@ -4,16 +4,16 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Check, Plus} from "lucide-react";
 import {z} from "zod";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import axios, {AxiosError} from "axios";
 import {cn, createAxiosConfig, parseApiErrors} from "@/lib/utils";
-import {useSession} from "@/components/session-provider";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import Spinner from "@/components/spinner";
 import {useWatch} from "@/hooks/useWatch";
 import {toast} from "sonner";
+import {SessionContext} from "@/app/session-provider";
 
 const createTaskSchema = z.object({
     name: z.string().min(3),
@@ -21,7 +21,7 @@ const createTaskSchema = z.object({
 });
 
 export default function CreateTaskForm() {
-    const {token} = useSession();
+    const {access_token} = useContext(SessionContext);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isCreated, setIsCreated] = useState<boolean>(false);
     const {updateWatcher} = useWatch();
@@ -38,7 +38,7 @@ export default function CreateTaskForm() {
     async function onSubmit(values: z.infer<typeof createTaskSchema>) {
         setIsLoading(true);
         try {
-            await axios.post("/api/v1/tasks", values, createAxiosConfig(token));
+            await axios.post("/api/v1/tasks", values, createAxiosConfig(access_token));
             form.reset();
             updateWatcher();
             setIsCreated(true);

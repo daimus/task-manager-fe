@@ -1,25 +1,25 @@
 import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import {Pencil, Check, Trash2} from "lucide-react";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {Input} from "@/components/ui/input";
 import {cn, createAxiosConfig, parseApiErrors} from "@/lib/utils";
 import axios, {AxiosError} from "axios";
 import {toast} from "sonner";
-import {useSession} from "@/components/session-provider";
 import {useWatch} from "@/hooks/useWatch";
 import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import Spinner from "@/components/spinner";
+import {SessionContext} from "@/app/session-provider";
 
 const updateTaskSchema = z.object({
     name: z.string().min(3)
 });
 
 export default function TaskItem ({task} : {task: {id: number, name: string, completed: boolean}}){
-    const {token} = useSession();
+    const {access_token} = useContext(SessionContext);
     const {updateWatcher} = useWatch();
     const [isLoading, setIsLoading] = useState(false);
     const [t, sT] = useState({id: 0, name: '', completed: false})
@@ -57,7 +57,7 @@ export default function TaskItem ({task} : {task: {id: number, name: string, com
     async function handleDelete(){
         setIsLoading(true)
         try {
-            await axios.delete(`/api/v1/tasks/${task.id}`, createAxiosConfig(token));
+            await axios.delete(`/api/v1/tasks/${task.id}`, createAxiosConfig(access_token));
             updateWatcher();
             setIsEditMode(false)
         } catch (e: unknown) {
@@ -74,7 +74,7 @@ export default function TaskItem ({task} : {task: {id: number, name: string, com
     async function updateTask(data : {name: string, completed: boolean}){
         setIsLoading(true)
         try {
-            await axios.patch(`/api/v1/tasks/${task.id}`, data, createAxiosConfig(token));
+            await axios.patch(`/api/v1/tasks/${task.id}`, data, createAxiosConfig(access_token));
             updateWatcher();
             setIsEditMode(false)
         } catch (e : unknown) {
